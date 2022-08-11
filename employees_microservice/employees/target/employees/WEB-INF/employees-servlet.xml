@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/data/mongo
+        https://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+
+  <ctx:component-scan base-package="com.employees"></ctx:component-scan>
+  <ctx:annotation-config></ctx:annotation-config>
+
+  <mongo:mongo-client id="mongoClient" host="localhost" />
+  <mongo:db-factory id="mongoDbFactory" dbname="employees" mongo-client-ref="mongoClient" />
+
+  <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+    <constructor-arg ref="mongoDbFactory" />
+  </bean>
+
+  <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+  <mongo:repositories base-package="com.employees.repo" mongo-template-ref="mongoTemplate"/>
+
+  <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+  </bean>
+
+  <bean id="filterProvider" class="com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider">
+    <property name="failOnUnknownId" value="false"></property>
+  </bean>
+
+  <bean id="currencyRest" class="org.springframework.web.client.RestTemplate">
+  </bean>
+
+  <bean id="bootstrapAddress" class="java.lang.String">
+    <constructor-arg value="localhost:9092"></constructor-arg>
+  </bean>
+
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="prefix" value="/views/"></property>
+    <property name="suffix" value=".jsp"></property>
+  </bean>
+
+</beans>
